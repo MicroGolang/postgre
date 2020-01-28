@@ -5,7 +5,7 @@
 ** @Filename:				Updator.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 28 January 2020 - 17:59:04
+** @Last modified time:		Tuesday 28 January 2020 - 18:08:14
 *******************************************************************************/
 
 package			postgre
@@ -22,23 +22,23 @@ type	S_Updator struct {
 	Arguments	[]interface{}
 }
 type	S_UpdatorSetter struct {
-	key	string
-	value string
+	Key	string
+	Value string
 }
 type	S_UpdatorWhere struct {
-	key	string
-	value string
+	Key	string
+	Value string
 }
 func	NewUpdator(PGR *sql.DB) (*S_Updator){
 	return &S_Updator{PGR: PGR}
 }
-func	(q *S_Updator) Set(values []S_UpdatorSetter) *S_Updator {
+func	(q *S_Updator) Set(values ...S_UpdatorSetter) *S_Updator {
 	q.QueryValues = `SET `
 	for index, each := range values {
 		if (index > 0) {q.QueryValues += `, `}
-		q.QueryValues += each.key + `=`
+		q.QueryValues += each.Key + `=`
 		q.QueryValues += `$` + strconv.Itoa(index + 1)
-		q.Arguments = append(q.Arguments, each.value)
+		q.Arguments = append(q.Arguments, each.Value)
 	}
 	return q
 }
@@ -51,9 +51,9 @@ func	(q *S_Updator) Where(asserts ...S_UpdatorWhere) *S_Updator {
 	q.QueryWhere = `WHERE `
 	for index, each := range asserts {
 		if (index > 0) {q.QueryWhere += `, `}
-		q.QueryWhere += each.key + `=`
+		q.QueryWhere += each.Key + `=`
 		q.QueryWhere += `$` + strconv.Itoa(index + initialIndex + 1)
-		q.Arguments = append(q.Arguments, each.value)
+		q.Arguments = append(q.Arguments, each.Value)
 	}
 	return q
 }
