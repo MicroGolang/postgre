@@ -5,7 +5,7 @@
 ** @Filename:				Insertor.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Wednesday 29 January 2020 - 15:17:16
+** @Last modified time:		Wednesday 29 January 2020 - 15:32:44
 *******************************************************************************/
 
 package			postgre
@@ -13,7 +13,6 @@ package			postgre
 import			"strconv"
 import			"database/sql"
 import			_ "github.com/lib/pq"
-import			"github.com/microgolang/logs"
 
 type	S_Insertor struct {
 	PGR			*sql.DB
@@ -60,7 +59,6 @@ func	(q *S_Insertor) Do() (string, error) {
 	**	Assert the query string
 	**************************************************************************/
 	query := q.QueryTable + ` ` + q.QueryAs + ` ` + q.QueryValues + ` RETURNING ID`
-	logs.Pretty(query, q.Arguments)
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		tx.Rollback()
