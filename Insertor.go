@@ -5,7 +5,7 @@
 ** @Filename:				Insertor.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Wednesday 29 January 2020 - 13:38:01
+** @Last modified time:		Wednesday 29 January 2020 - 13:55:25
 *******************************************************************************/
 
 package			postgre
@@ -30,16 +30,6 @@ func	NewInsertor(PGR *sql.DB) (*S_Insertor){
 	return &S_Insertor{PGR: PGR}
 }
 func	(q *S_Insertor) Values(values ...S_InsertorWhere) *S_Insertor {
-	// q.QueryValues = `WHERE `
-	// for index, each := range asserts {
-	// 	if (index > 0) {q.QueryValues += `, `}
-	// 	q.QueryValues += each.Key + `=`
-	// 	q.QueryValues += `$` + strconv.Itoa(index + 1)
-	// 	q.Arguments = append(q.Arguments, each.Value)
-	// }
-	// return q
-
-	// var	arguments []interface{}
 
 	q.QueryAs += `(`
 	q.QueryValues = `VALUES (`
@@ -56,15 +46,6 @@ func	(q *S_Insertor) Values(values ...S_InsertorWhere) *S_Insertor {
 	q.QueryAs += `)`
 	return q
 }
-// func	(q *S_Insertor) As(keys ...string) *S_Insertor {
-// 	q.QueryAs = `(`
-// 	for index, key := range keys {
-// 		if (index > 0) {q.QueryAs += `, `}
-// 		q.QueryAs += key
-// 	}
-// 	q.QueryAs += `)`
-// 	return q
-// }
 func	(q *S_Insertor) Into(table string) *S_Insertor {
 	q.QueryTable = `INSERT INTO ` + table
 	return q
