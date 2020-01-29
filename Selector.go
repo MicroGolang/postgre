@@ -5,7 +5,7 @@
 ** @Filename:				Selector.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 28 January 2020 - 18:50:43
+** @Last modified time:		Wednesday 29 January 2020 - 16:09:56
 *******************************************************************************/
 
 package			postgre
@@ -43,7 +43,7 @@ func	(q *S_Selector) From(table string) *S_Selector {
 func	(q *S_Selector) Where(asserts ...S_SelectorWhere) *S_Selector {
 	q.QueryWhere = `WHERE `
 	for index, each := range asserts {
-		if (index > 0) {q.QueryWhere += `, `}
+		if (index > 0) {q.QueryWhere += ` AND `}
 		q.QueryWhere += each.Key + `=`
 		q.QueryWhere += `$` + strconv.Itoa(index + 1)
 		q.Arguments = append(q.Arguments, each.Value)
