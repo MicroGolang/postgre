@@ -5,7 +5,7 @@
 ** @Filename:				Insertor.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Wednesday 29 January 2020 - 13:55:25
+** @Last modified time:		Wednesday 29 January 2020 - 15:17:16
 *******************************************************************************/
 
 package			postgre
@@ -13,6 +13,7 @@ package			postgre
 import			"strconv"
 import			"database/sql"
 import			_ "github.com/lib/pq"
+import			"github.com/microgolang/logs"
 
 type	S_Insertor struct {
 	PGR			*sql.DB
@@ -30,7 +31,6 @@ func	NewInsertor(PGR *sql.DB) (*S_Insertor){
 	return &S_Insertor{PGR: PGR}
 }
 func	(q *S_Insertor) Values(values ...S_InsertorWhere) *S_Insertor {
-
 	q.QueryAs += `(`
 	q.QueryValues = `VALUES (`
 	for index, value := range values {
@@ -60,6 +60,7 @@ func	(q *S_Insertor) Do() (string, error) {
 	**	Assert the query string
 	**************************************************************************/
 	query := q.QueryTable + ` ` + q.QueryAs + ` ` + q.QueryValues + ` RETURNING ID`
+	logs.Pretty(query, q.Arguments)
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		tx.Rollback()
