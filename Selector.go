@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Friday 31 January 2020 - 12:35:53
+** @Last modified time:		Friday 31 January 2020 - 17:19:38
 *******************************************************************************/
 
 package postgre
@@ -122,6 +122,7 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 	}
 
 	var sliceItem reflect.Type
+	_ = sliceItem
 	items := reflect.TypeOf(receptacle).Elem()
 	if items.Kind() == reflect.Ptr {
         items = items.Elem()
@@ -132,7 +133,6 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 	}
 	
 	var myTypes []interface{}
-	var myRows [][]interface{}
 	for j := 0; j < items.NumField(); j++ {
 		if (items.Field(j).Type.String() == `int`) {
 			randomValue := 0
@@ -143,33 +143,30 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 		}
 	}
 
+	receptArry := reflect.MakeSlice(sliceItem, 0, 0)
+	index := 0
 	for rows.Next() {
 		err = rows.Scan(myTypes...)
-		myRows = append(myRows, myTypes)
+		receptArry = reflect.Append(receptArry, reflect.New(items).Elem())
+
+		for j := 0; j < items.NumField(); j++ {
+			typeOf := items.Field(j).Type.String()
+			nameOf := items.Field(j).Name
+			if (typeOf == `int`) {
+				receptArry.Index(index).FieldByName(nameOf).Set(reflect.ValueOf(*(myTypes[j]).(*int)))
+			} else if (typeOf == `string`) {
+				receptArry.Index(index).FieldByName(nameOf).Set(reflect.ValueOf(*(myTypes[j]).(*string)))
+			}
+		}
 
 		if err != nil {
 			tx.Rollback()
 			logs.Pretty(err)
 			return nil, err
 		}
+		index++
 	}
 	rows.Close()
-
-	receptArry := reflect.MakeSlice(sliceItem, len(myRows), len(myRows))
-	for _, row := range myRows {
-		for index := 0; index < receptArry.Len(); index++ {
-			for j := 0; j < receptArry.Index(index).NumField(); j++ {
-				typeOf := receptArry.Index(index).Field(j).Type().String()
-
-				if (typeOf == `int`) {
-					receptArry.Index(index).Field(j).Set(reflect.ValueOf(*(row[j]).(*int)))
-				} else if (typeOf == `string`) {
-					receptArry.Index(index).Field(j).Set(reflect.ValueOf(*(row[j]).(*string)))
-				}
-			}
-		}
-	}
-
 	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
