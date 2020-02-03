@@ -5,7 +5,7 @@
 ** @Filename:				Updator.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 28 January 2020 - 18:08:14
+** @Last modified time:		Monday 03 February 2020 - 19:07:38
 *******************************************************************************/
 
 package			postgre
@@ -50,7 +50,7 @@ func	(q *S_Updator) Where(asserts ...S_UpdatorWhere) *S_Updator {
 	initialIndex := len(q.Arguments)
 	q.QueryWhere = `WHERE `
 	for index, each := range asserts {
-		if (index > 0) {q.QueryWhere += `, `}
+		if (index > 0) {q.QueryWhere += ` AND `}
 		q.QueryWhere += each.Key + `=`
 		q.QueryWhere += `$` + strconv.Itoa(index + initialIndex + 1)
 		q.Arguments = append(q.Arguments, each.Value)
