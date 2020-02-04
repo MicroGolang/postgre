@@ -5,7 +5,7 @@
 ** @Filename:				Deletor.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 28 January 2020 - 19:04:34
+** @Last modified time:		Tuesday 04 February 2020 - 15:20:14
 *******************************************************************************/
 
 package			postgre
@@ -37,7 +37,7 @@ func	(q *S_Deletor) Into(table string) *S_Deletor {
 func	(q *S_Deletor) Where(asserts ...S_DeletorWhere) *S_Deletor {
 	q.QueryWhere = `WHERE `
 	for index, each := range asserts {
-		if (index > 0) {q.QueryWhere += `, `}
+		if (index > 0) {q.QueryWhere += ` AND `}
 		q.QueryWhere += each.Key + `=`
 		q.QueryWhere += `$` + strconv.Itoa(index + 1)
 		q.Arguments = append(q.Arguments, each.Value)
