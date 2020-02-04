@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 04 February 2020 - 12:55:07
+** @Last modified time:		Tuesday 04 February 2020 - 14:08:40
 *******************************************************************************/
 
 package postgre
@@ -21,6 +21,7 @@ type	S_Selector struct {
 	QuerySelect	string
 	QueryFrom	string
 	QueryWhere	string
+	QueryOrder	string
 	Arguments	[]interface{}
 }
 type	S_SelectorWhere struct {
@@ -50,6 +51,10 @@ func	(q *S_Selector) Where(asserts ...S_SelectorWhere) *S_Selector {
 		q.QueryWhere += `$` + strconv.Itoa(index + 1)
 		q.Arguments = append(q.Arguments, each.Value)
 	}
+	return q
+}
+func	(q *S_Selector) Sort(order, direction string) *S_Selector {
+	q.QueryOrder = `ORDER BY ` + order + ` ` + direction
 	return q
 }
 func	(q *S_Selector) One(receptacle ...interface{}) (error) {
@@ -104,7 +109,7 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 	/**************************************************************************
 	**	Assert the query string
 	**************************************************************************/
-	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryWhere
+	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryWhere + ` ` + q.QueryOrder
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		tx.Rollback()
