@@ -5,7 +5,7 @@
 ** @Filename:				Updator.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Monday 03 February 2020 - 19:07:38
+** @Last modified time:		Thursday 06 February 2020 - 19:38:51
 *******************************************************************************/
 
 package			postgre
@@ -23,10 +23,13 @@ type	S_Updator struct {
 }
 type	S_UpdatorSetter struct {
 	Key	string
+	Action string
 	Value string
 }
 type	S_UpdatorWhere struct {
 	Key	string
+	Action string
+	Values []string
 	Value string
 }
 func	NewUpdator(PGR *sql.DB) (*S_Updator){
@@ -37,7 +40,15 @@ func	(q *S_Updator) Set(values ...S_UpdatorSetter) *S_Updator {
 	for index, each := range values {
 		if (index > 0) {q.QueryValues += `, `}
 		q.QueryValues += each.Key + `=`
-		q.QueryValues += `$` + strconv.Itoa(index + 1)
+
+		if (each.Action != ``) {
+			q.QueryValues += each.Action + `(` + each.Key + `, `
+			q.QueryValues += `$` + strconv.Itoa(index + 1)
+			q.QueryValues += `)`
+		} else {
+			q.QueryValues += `$` + strconv.Itoa(index + 1)
+		}
+
 		q.Arguments = append(q.Arguments, each.Value)
 	}
 	return q
@@ -49,11 +60,29 @@ func	(q *S_Updator) Into(table string) *S_Updator {
 func	(q *S_Updator) Where(asserts ...S_UpdatorWhere) *S_Updator {
 	initialIndex := len(q.Arguments)
 	q.QueryWhere = `WHERE `
+	totalIndex := initialIndex
+
 	for index, each := range asserts {
 		if (index > 0) {q.QueryWhere += ` AND `}
-		q.QueryWhere += each.Key + `=`
-		q.QueryWhere += `$` + strconv.Itoa(index + initialIndex + 1)
-		q.Arguments = append(q.Arguments, each.Value)
+
+		if (each.Action == `IN`) {
+			q.QueryWhere += each.Key + ` IN (`
+			for idx, eachValue := range each.Values {
+				if (idx > 0) {
+					q.QueryWhere += `, `
+					totalIndex++
+				}
+				q.QueryWhere += `$` + strconv.Itoa(totalIndex + 1)
+				q.Arguments = append(q.Arguments, eachValue)
+			}
+			q.QueryWhere += `)`
+		} else {
+			q.QueryWhere += each.Key + `=`
+			q.QueryWhere += `$` + strconv.Itoa(totalIndex + 1)
+			q.Arguments = append(q.Arguments, each.Value)
+		}
+
+		totalIndex++
 	}
 	return q
 }
