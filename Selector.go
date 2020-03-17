@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 17 March 2020 - 15:31:22
+** @Last modified time:		Tuesday 17 March 2020 - 17:29:58
 *******************************************************************************/
 
 package postgre
@@ -156,6 +156,9 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 		} else if (items.Field(j).Type.String() == `sql.NullString`) {
 			var	randomValue sql.NullString
 			myTypes = append(myTypes, &randomValue)
+		} else if (items.Field(j).Type.String() == `bool`) {
+			var	randomValue bool
+			myTypes = append(myTypes, &randomValue)
 		}
 	}
 
@@ -174,6 +177,8 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 				receptArry.Index(index).FieldByName(nameOf).Set(reflect.ValueOf(*(myTypes[j]).(*string)))
 			} else if (typeOf == `sql.NullString`) {
 				receptArry.Index(index).FieldByName(nameOf).Set(reflect.ValueOf(*(myTypes[j]).(*sql.NullString)))
+			} else if (typeOf == `bool`) {
+				receptArry.Index(index).FieldByName(nameOf).Set(reflect.ValueOf(*(myTypes[j]).(*bool)))
 			}
 		}
 
