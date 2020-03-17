@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 17 March 2020 - 15:20:05
+** @Last modified time:		Tuesday 17 March 2020 - 15:22:21
 *******************************************************************************/
 
 package postgre
@@ -118,7 +118,7 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 	/**************************************************************************
 	**	Assert the query string
 	**************************************************************************/
-	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryLimit + ` ` + q.QueryWhere + ` ` + q.QueryOrder
+	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryWhere + ` ` + q.QueryOrder + ` ` + q.QueryLimit + `;`
 	logs.Pretty(query)
 	stmt, err := tx.Prepare(query)
 	if err != nil {
