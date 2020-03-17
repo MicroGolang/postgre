@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 17 March 2020 - 14:14:17
+** @Last modified time:		Tuesday 17 March 2020 - 15:17:08
 *******************************************************************************/
 
 package postgre
@@ -59,6 +59,10 @@ func	(q *S_Selector) Where(asserts ...S_SelectorWhere) *S_Selector {
 }
 func	(q *S_Selector) Sort(order, direction string) *S_Selector {
 	q.QueryOrder = `ORDER BY ` + order + ` ` + direction
+	return q
+}
+func	(q *S_Selector) Limit(number string) *S_Selector {
+	q.QueryOrder = `LIMIT ` + number
 	return q
 }
 func	(q *S_Selector) One(receptacle ...interface{}) (error) {
