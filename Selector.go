@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 17 March 2020 - 14:09:44
+** @Last modified time:		Tuesday 17 March 2020 - 14:14:17
 *******************************************************************************/
 
 package postgre
@@ -27,7 +27,7 @@ type	S_Selector struct {
 type	S_SelectorWhere struct {
 	Key	string
 	Value string
-	Comparison string
+	Operator string
 }
 func	NewSelector(PGR *sql.DB) (*S_Selector){
 	return &S_Selector{PGR: PGR}
@@ -48,10 +48,10 @@ func	(q *S_Selector) Where(asserts ...S_SelectorWhere) *S_Selector {
 	q.QueryWhere = `WHERE `
 	for index, each := range asserts {
 		if (index > 0) {q.QueryWhere += ` AND `}
-		if (each.Comparison == ``) {
-			each.Comparison = `=`
+		if (each.Operator == ``) {
+			each.Operator = `=`
 		}
-		q.QueryWhere += each.Key + each.Comparison
+		q.QueryWhere += each.Key + each.Operator
 		q.QueryWhere += `$` + strconv.Itoa(index + 1)
 		q.Arguments = append(q.Arguments, each.Value)
 	}
