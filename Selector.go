@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 17 March 2020 - 15:22:21
+** @Last modified time:		Tuesday 17 March 2020 - 15:31:22
 *******************************************************************************/
 
 package postgre
@@ -14,7 +14,6 @@ import			"strconv"
 import			"reflect"
 import			"database/sql"
 import			_ "github.com/lib/pq"
-import			"github.com/microgolang/logs"
 
 type	S_Selector struct {
 	PGR			*sql.DB
@@ -119,7 +118,6 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 	**	Assert the query string
 	**************************************************************************/
 	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryWhere + ` ` + q.QueryOrder + ` ` + q.QueryLimit + `;`
-	logs.Pretty(query)
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		tx.Rollback()
@@ -181,7 +179,6 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 
 		if err != nil {
 			tx.Rollback()
-			logs.Pretty(err)
 			return nil, err
 		}
 		index++
