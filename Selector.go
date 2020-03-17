@@ -5,7 +5,7 @@
 ** @Filename:				DEBUG.go
 **
 ** @Last modified by:		Tbouder
-** @Last modified time:		Tuesday 17 March 2020 - 15:17:08
+** @Last modified time:		Tuesday 17 March 2020 - 15:18:56
 *******************************************************************************/
 
 package postgre
@@ -22,6 +22,7 @@ type	S_Selector struct {
 	QueryFrom	string
 	QueryWhere	string
 	QueryOrder	string
+	QueryLimit	string
 	Arguments	[]interface{}
 }
 type	S_SelectorWhere struct {
@@ -62,7 +63,7 @@ func	(q *S_Selector) Sort(order, direction string) *S_Selector {
 	return q
 }
 func	(q *S_Selector) Limit(number string) *S_Selector {
-	q.QueryOrder = `LIMIT ` + number
+	q.QueryLimit = `LIMIT ` + number
 	return q
 }
 func	(q *S_Selector) One(receptacle ...interface{}) (error) {
@@ -117,7 +118,7 @@ func	(q *S_Selector) All(receptacle interface{}) (interface{}, error) {
 	/**************************************************************************
 	**	Assert the query string
 	**************************************************************************/
-	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryWhere + ` ` + q.QueryOrder
+	query := q.QuerySelect + ` ` + q.QueryFrom + ` ` + q.QueryWhere + ` ` + q.QueryOrder + ` ` + q.QueryLimit
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		tx.Rollback()
